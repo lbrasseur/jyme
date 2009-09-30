@@ -12,6 +12,7 @@ Dont add spaces or empty new lines at the end :).
 
 
 = Example 1 =
+{{{
 Rutina Pepe Sanchez
 -
 day 1
@@ -21,8 +22,9 @@ pecho/1,12,40/2,10,45
 day dos
 abdominales/4,30,0
 dorsales/2,10,35/2,8,50
-
+}}}
 = Example 2 =
+{{{
 Routine A
 -
 dia unop
@@ -32,3 +34,4 @@ pelota/1,12,40/2,10,45
 dia dois
 cinta/4,30,0
 mate/2,10,35/2,8,50
+}}}
