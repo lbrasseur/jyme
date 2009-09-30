@@ -3,12 +3,12 @@
 = These are text file examples =
 As you can see, there are different separators:
 
-\n-\n for routine fields
-\n for day fields
-/  for exercise fields
-, for series fields
+ * \n-\n for routine fields
+ * \n for day fields
+ * /  for exercise fields
+ * , for series fields
 
-Dont add spaces or empty new lines at the end :).
+Don't add spaces or empty new lines at the end :).
 
 
 = Example 1 =
