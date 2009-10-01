@@ -26,14 +26,17 @@ class NavigationForm extends Form {
 		final Command cmNext = new Command("Siguiente", Command.SCREEN, 1);
 		final Command cmPrevious = new Command("Anterior", Command.BACK, 2);
 
-		excersise = new StringItem("Ejercicio", "");
-		quantity = new StringItem("Cantidad", "");
-		repetitions = new StringItem("Repeticiones", "");
-		weigth = new StringItem("Peso", "");
+		excersise = new StringItem("Ejercicio: ", "");
+		quantity = new StringItem("Cantidad: ", "");
+		repetitions = new StringItem("Repeticiones: ", "");
+		weigth = new StringItem("Peso: ", "");
 
 		append(excersise);
+		append("\n");
 		append(quantity);
+		append("\n");
 		append(repetitions);
+		append("\n");
 		append(weigth);
 
 		addCommand(cmNext);
