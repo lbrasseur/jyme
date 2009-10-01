@@ -44,8 +44,5 @@ public class Routine {
 
 	public void setDays(Day[] days) {
 		this.days = days;
-		for (int n = 0; n < days.length; n++) {
-			days[n].setRoutine(this);
-		}
 	}
 }

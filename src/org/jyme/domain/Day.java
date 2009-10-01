@@ -4,8 +4,7 @@ import org.jyme.bus.StringUtils;
 
 public class Day {
 	private String name;
-	private Excercise[] excercises;
-	private Routine routine;
+	private Exercise[] excercises;
 	private final static String SEPARATOR = "\n";
 
 	public Day() {
@@ -13,7 +12,7 @@ public class Day {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Day(String name, Excercise[] excercises) {
+	public Day(String name, Exercise[] excercises) {
 		super();
 		this.name = name;
 		this.excercises = excercises;
@@ -25,9 +24,9 @@ public class Day {
 		
 		day.setName(fields[0]);
 		
-		Excercise[] excersises =  new Excercise[fields.length -1];
+		Exercise[] excersises =  new Exercise[fields.length -1];
 		for (int n = 1; n<fields.length;n++) {
-			excersises[n - 1]= Excercise.fromString(fields[n]);
+			excersises[n - 1]= Exercise.fromString(fields[n]);
 		}
 		day.setExcercises(excersises);
 		
@@ -43,19 +42,11 @@ public class Day {
 		this.name = name;
 	}
 
-	public Excercise[] getExcercises() {
+	public Exercise[] getExcercises() {
 		return excercises;
 	}
 
-	public void setExcercises(Excercise[] excercises) {
+	public void setExcercises(Exercise[] excercises) {
 		this.excercises = excercises;
-	}
-
-	public Routine getRoutine() {
-		return routine;
-	}
-
-	public void setRoutine(Routine routine) {
-		this.routine = routine;
 	}
 }

@@ -2,23 +2,23 @@ package org.jyme.domain;
 
 import org.jyme.bus.StringUtils;
 
-public class Excercise {
+public class Exercise {
 	private String name;
 	private Series[] series;
 	private final static String SEPARATOR = "/";
 
-	public Excercise() {
+	public Exercise() {
 		super();
 	}
 
-	public Excercise(String name, Series[] series) {
+	public Exercise(String name, Series[] series) {
 		super();
 		this.name = name;
 		this.series = series;
 	}
 
-	static Excercise fromString(String data) {
-		Excercise excersise = new Excercise();
+	static Exercise fromString(String data) {
+		Exercise excersise = new Exercise();
 		String[] fields = StringUtils.split(data, SEPARATOR); 
 		
 		excersise.setName(fields[0]);

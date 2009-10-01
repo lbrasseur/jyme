@@ -5,19 +5,24 @@ import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 
 import org.jyme.bus.RoutineManager;
 import org.jyme.domain.Routine;
 
-class RoutineSelectionForm extends Form {
-	private FormManager formManager = FormManager.getInstance();
-
-	public RoutineSelectionForm(final Routine[] routines) {
+class RoutineSelectionForm extends BaseForm {
+	public RoutineSelectionForm() {
 		super("Seleccion de rutina");
+
+		final Routine[] routines = getRoutineManager().getRoutines();
+
 		final ChoiceGroup routineCg = new ChoiceGroup("", Choice.EXCLUSIVE);
 		for (int n = 0; n < routines.length; n++) {
 			routineCg.append(routines[n].getName(), null);
+
+			if (routines[n].getName().equals(
+					getRoutineManager().getCurrentRoutine().getName())) {
+				routineCg.setSelectedIndex(n, true);
+			}
 		}
 
 		final Command cmSelect = new Command("Seleccionar", Command.ITEM, 1);
@@ -34,11 +39,11 @@ class RoutineSelectionForm extends Form {
 		setCommandListener(new CommandListener() {
 			public void commandAction(Command command, Displayable displayable) {
 				if (command == cmExit) {
-					formManager.navigateToExit();
+					getFormManager().navigateToExit();
 				} else if (command == cmAdd) {
-					formManager.navigateToRoutineLoad();
+					getFormManager().navigateToRoutineLoad();
 				} else if (command == cmDelete) {
-					formManager.confirmate("Desea borrar la rutina?",
+					getFormManager().confirmate("Desea borrar la rutina?",
 							new CommandListener() {
 								public void commandAction(Command command,
 										Displayable displayable) {
@@ -49,14 +54,16 @@ class RoutineSelectionForm extends Form {
 														routines[routineCg
 																.getSelectedIndex()]);
 									}
-									formManager.navigateToRoutineSelection();
+									getFormManager()
+											.navigateToRoutineSelection();
 								}
 							});
 
 				} else if (command == cmSelect) {
 					if (routineCg.getSelectedIndex() >= 0) {
-						formManager.navigateToDaySelection(routines[routineCg
-								.getSelectedIndex()]);
+						getRoutineManager().setCurrentRoutine(
+								routineCg.getSelectedIndex());
+						getFormManager().navigateToDaySelection();
 					}
 				}
 			}

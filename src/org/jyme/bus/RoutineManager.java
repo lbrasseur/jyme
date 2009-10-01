@@ -7,17 +7,32 @@ import java.io.InputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.midlet.MIDlet;
-import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
+import org.jyme.data.DataManager;
+import org.jyme.data.RecordCallback;
+import org.jyme.data.RecordStoreCallback;
+import org.jyme.domain.Day;
+import org.jyme.domain.Exercise;
 import org.jyme.domain.Routine;
+import org.jyme.domain.Series;
 
 public class RoutineManager {
 	private static RoutineManager instance = new RoutineManager();
+	private DataManager dataManager = DataManager.getInstance();
 	private MIDlet midlet;
 	private final static String RS_NAME = "routines";
+	private final static String RS_STATE_NAME = "routineState";
 	private final static String BASE_URL_KEY = "routineBaseUrl";
+	private Routine[] routines;
+	private int currentRoutine;
+	private int currentDay;
+	private int currentExercise;
+	private int currentSeries;
+
+	private RoutineManager() {
+	}
 
 	public static RoutineManager getInstance() {
 		return instance;
@@ -28,7 +43,7 @@ public class RoutineManager {
 				.convertToUnix(getRoutineFromUrl(urlName));
 		final Routine newRoutine = Routine.fromString(routineString);
 
-		boolean found = execute(new RecordCallback() {
+		boolean found = dataManager.execute(RS_NAME, new RecordCallback() {
 			public boolean doInRecord(int recordId, RecordStore recordStore,
 					int iteration) throws RecordStoreException {
 				Routine currentRoutine = Routine.fromString(new String(
@@ -46,7 +61,7 @@ public class RoutineManager {
 		});
 
 		if (!found) {
-			execute(new RecordStoreCallback() {
+			dataManager.execute(RS_NAME, new RecordStoreCallback() {
 				public Object doInRecordStore(RecordStore recordStore)
 						throws RecordStoreException {
 					recordStore.addRecord(routineString.getBytes(), 0,
@@ -55,16 +70,118 @@ public class RoutineManager {
 				}
 			});
 		}
+		loadRoutines();
 	}
 
-	public Routine[] loadRoutines() {
-		return (Routine[]) execute(new RecordStoreCallback() {
+	public void deleteRoutine(final Routine routine) {
+		dataManager.execute(RS_NAME, new RecordCallback() {
+			public boolean doInRecord(int recordId, RecordStore recordStore,
+					int iteration) throws RecordStoreException {
+				Routine currentRoutine = Routine.fromString(new String(
+						recordStore.getRecord(recordId)));
+
+				if (currentRoutine.getName().equals(routine.getName())) {
+					recordStore.deleteRecord(recordId);
+					loadRoutines();
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+		});
+	}
+
+	public void navigateForward() {
+		if (currentSeries < getCurrentExercise().getSeries().length - 1) {
+			currentSeries++;
+		} else if (currentExercise < getCurrentDay().getExcercises().length - 1) {
+			currentExercise++;
+			currentSeries = 0;
+		}
+	}
+
+	public void navigateBack() {
+		if (currentSeries > 0) {
+			currentSeries--;
+		} else if (currentExercise > 0) {
+			currentExercise--;
+			currentSeries = (byte) (getCurrentExercise().getSeries().length - 1);
+		}
+	}
+
+	public void saveState() {
+		dataManager.setUniqueRecord(RS_STATE_NAME, new byte[] {
+				(byte) currentRoutine, (byte) currentDay,
+				(byte) currentExercise, (byte) currentSeries });
+	}
+
+	public void loadState() {
+		loadRoutines();
+		byte[] record = dataManager.getUniqueRecord(RS_STATE_NAME);
+		if (record != null) {
+			currentRoutine = record[0];
+			currentDay = record[1];
+			currentExercise = record[2];
+			currentSeries = record[3];
+		}
+	}
+
+	public Routine[] getRoutines() {
+		if (routines == null) {
+			loadRoutines();
+		}
+		return routines;
+	}
+
+	public Routine getCurrentRoutine() {
+		return routines[currentRoutine];
+	}
+
+	public Day getCurrentDay() {
+		return getCurrentRoutine().getDays()[currentDay];
+	}
+
+	public Exercise getCurrentExercise() {
+		System.out.println("currentExercise" +currentExercise);
+		return getCurrentDay().getExcercises()[currentExercise];
+	}
+
+	public Series getCurrentSeries() {
+		return getCurrentExercise().getSeries()[currentSeries];
+	}
+
+	public void setCurrentRoutine(int currentRoutine) {
+		this.currentRoutine = currentRoutine;
+		setCurrentDay(0);
+	}
+
+	public void setCurrentDay(int currentDay) {
+		this.currentDay = currentDay;
+		setCurrentExercise(0);
+	}
+
+	public void setCurrentExercise(int currentExercise) {
+		this.currentExercise = currentExercise;
+		setCurrentSeries(0);
+	}
+
+	public void setCurrentSeries(int currentSeries) {
+		this.currentSeries = currentSeries;
+	}
+
+	private void loadRoutines() {
+		dataManager.execute(RS_NAME, new RecordStoreCallback() {
 			public Object doInRecordStore(RecordStore recordStore)
 					throws RecordStoreException {
-				final Routine[] routines = new Routine[recordStore
-						.getNumRecords()];
+				currentRoutine = 0;
+				currentDay = 0;
+				currentExercise = 0;
+				currentSeries = 0;
 
-				execute(recordStore, new RecordCallback() {
+				routines = new Routine[recordStore.getNumRecords()];
+
+				dataManager.execute(recordStore, new RecordCallback() {
 					public boolean doInRecord(int recordId,
 							RecordStore recordStore, int iteration)
 							throws RecordStoreException {
@@ -74,26 +191,8 @@ public class RoutineManager {
 					}
 				});
 
-				return routines;
+				return null;
 			}
-		});
-	}
-
-	public void deleteRoutine(final Routine routine) {
-		execute(new RecordCallback() {
-			public boolean doInRecord(int recordId, RecordStore recordStore,
-					int iteration) throws RecordStoreException {
-				Routine currentRoutine = Routine.fromString(new String(
-						recordStore.getRecord(recordId)));
-
-				if (currentRoutine.getName().equals(routine.getName())) {
-					recordStore.deleteRecord(recordId);
-					return false;
-				} else {
-					return true;
-				}
-			}
-
 		});
 	}
 
@@ -153,56 +252,6 @@ public class RoutineManager {
 			}
 		}
 
-	}
-
-	private Object execute(RecordStoreCallback recordStoreCallback) {
-		RecordStore recordStore = null;
-		try {
-			recordStore = RecordStore.openRecordStore(RS_NAME, true);
-			return recordStoreCallback.doInRecordStore(recordStore);
-		} catch (RecordStoreException e) {
-			throw new RuntimeException(e.toString());
-		} finally {
-			if (recordStore != null) {
-				try {
-					recordStore.closeRecordStore();
-				} catch (RecordStoreException e) {
-					throw new RuntimeException(e.toString());
-				}
-			}
-		}
-	}
-
-	private boolean execute(final RecordCallback recordCallback) {
-		Boolean b = (Boolean) execute(new RecordStoreCallback() {
-			public Object doInRecordStore(RecordStore recordStore)
-					throws RecordStoreException {
-				return new Boolean(execute(recordStore, recordCallback));
-			}
-		});
-		return b.booleanValue();
-	}
-
-	private boolean execute(RecordStore recordStore,
-			RecordCallback recordCallback) throws RecordStoreException {
-		int n = 0;
-		RecordEnumeration re = recordStore.enumerateRecords(null, null, false);
-		boolean cont = true;
-		while (cont && re.hasNextElement()) {
-			cont = recordCallback.doInRecord(re.nextRecordId(), recordStore, n);
-			n++;
-		}
-		return !cont;
-	}
-
-	private interface RecordStoreCallback {
-		Object doInRecordStore(RecordStore recordStore)
-				throws RecordStoreException;
-	}
-
-	private interface RecordCallback {
-		boolean doInRecord(int recordId, RecordStore recordStore, int iteration)
-				throws RecordStoreException;
 	}
 
 	public void setMidlet(MIDlet midlet) {

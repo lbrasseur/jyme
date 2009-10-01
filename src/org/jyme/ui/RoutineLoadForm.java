@@ -3,12 +3,11 @@ package org.jyme.ui;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 
 import org.jyme.bus.RoutineManager;
 
-class RoutineLoadForm extends Form {
+class RoutineLoadForm extends BaseForm {
 	public RoutineLoadForm() {
 		super("Nueva rutina");
 
