@@ -6,16 +6,23 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 import javax.microedition.midlet.MIDlet;
 
 import org.jyme.bus.RoutineManager;
-import org.jyme.domain.Day;
-import org.jyme.domain.Routine;
+import org.jyme.data.DataManager;
 
 public class FormManager {
 	private static FormManager instance = new FormManager();
+	private DataManager dataManager = DataManager.getInstance();
+	private final static String RS_STATE_NAME = "formState";
 	private MIDlet midlet;
 	private Display display;
+	private RoutineManager routineManager = RoutineManager.getInstance();
+	private final int FORM_ROUTINE_SELECTION = 0;
+	private final int FORM_DAY_SELECTION = 1;
+	private final int FORM_NAVIGATION = 2;
+	private int currentForm = FORM_ROUTINE_SELECTION;
 
 	private FormManager() {
 	}
@@ -25,21 +32,22 @@ public class FormManager {
 	}
 
 	public void navigateToRoutineSelection() {
-		Routine[] routines = RoutineManager.getInstance().loadRoutines();
-
-		display.setCurrent(new RoutineSelectionForm(routines));
+		currentForm = FORM_ROUTINE_SELECTION;
+		navigateToCurrentForm();
 	}
 
-	public void navigateToDaySelection(Routine routine) {
-		if (routine.getDays().length == 1) {
-			navigateToNavigation(routine.getDays()[0]);
+	public void navigateToDaySelection() {
+		if (routineManager.getCurrentRoutine().getDays().length == 1) {
+			navigateToNavigation();
 		} else {
-			display.setCurrent(new DaySelectionForm(routine));
+			currentForm = FORM_DAY_SELECTION;
+			navigateToCurrentForm();
 		}
 	}
 
-	public void navigateToNavigation(Day day) {
-		display.setCurrent(new NavigationForm(day));
+	public void navigateToNavigation() {
+		currentForm = FORM_NAVIGATION;
+		navigateToCurrentForm();
 	}
 
 	public void navigateToRoutineLoad() {
@@ -75,5 +83,35 @@ public class FormManager {
 	public void setMidlet(MIDlet midlet) {
 		this.midlet = midlet;
 		display = Display.getDisplay(midlet);
+	}
+
+	public void saveState() {
+		dataManager.setUniqueRecord(RS_STATE_NAME,
+				new byte[] { (byte) currentForm });
+	}
+
+	public void loadState() {
+		byte[] record = dataManager.getUniqueRecord(RS_STATE_NAME);
+		if (record != null) {
+			currentForm = record[0];
+		}
+		navigateToCurrentForm();
+	}
+
+	private void navigateToCurrentForm() {
+		Form form = null;
+		switch (currentForm) {
+		case FORM_ROUTINE_SELECTION:
+			form = new RoutineSelectionForm();
+			break;
+		case FORM_DAY_SELECTION:
+			form = new DaySelectionForm();
+			break;
+
+		case FORM_NAVIGATION:
+			form = new NavigationForm();
+			break;
+		}
+		display.setCurrent(form);
 	}
 }

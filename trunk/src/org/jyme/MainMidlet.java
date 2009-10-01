@@ -7,17 +7,24 @@ import org.jyme.bus.RoutineManager;
 import org.jyme.ui.FormManager;
 
 public class MainMidlet extends MIDlet {
+	private RoutineManager routineManager = RoutineManager.getInstance();
+	private FormManager formManager = FormManager.getInstance();
+
 	protected void startApp() throws MIDletStateChangeException {
-		RoutineManager.getInstance().setMidlet(this);
-		FormManager formManager = FormManager.getInstance();
+		routineManager.setMidlet(this);
 		formManager.setMidlet(this);
-		formManager.navigateToRoutineSelection();
+		routineManager.loadState();
+		formManager.loadState();
 	}
 
 	protected void pauseApp() {
+		routineManager.saveState();
+		formManager.saveState();
 	}
 
 	public void destroyApp(boolean unconditional)
 			throws MIDletStateChangeException {
+		routineManager.saveState();
+		formManager.saveState();
 	}
 }

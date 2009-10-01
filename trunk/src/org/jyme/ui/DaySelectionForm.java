@@ -5,21 +5,27 @@ import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 
 import org.jyme.domain.Routine;
 
-class DaySelectionForm extends Form {
-	public DaySelectionForm(final Routine routine) {
+class DaySelectionForm extends BaseForm {
+	public DaySelectionForm() {
 		super("Seleccion de día");
 
+		final Routine routine = getRoutineManager().getCurrentRoutine();
+		
 		final ChoiceGroup dayCg = new ChoiceGroup("", Choice.EXCLUSIVE);
 		for (int n = 0; n < routine.getDays().length; n++) {
 			dayCg.append(routine.getDays()[n].getName(), null);
+
+			if (routine.getDays()[n].getName().equals(
+					getRoutineManager().getCurrentDay().getName())) {
+				dayCg.setSelectedIndex(n, true);
+			}
 		}
 
-		final Command cmSelect = new Command("Seleccionar", Command.SCREEN, 1);
-		final Command cmBack = new Command("Volver", Command.BACK, 1);
+		final Command cmSelect = new Command("Seleccionar", Command.ITEM, 1);
+		final Command cmBack = new Command("Volver", Command.ITEM, 1);
 
 		addCommand(cmSelect);
 		addCommand(cmBack);
@@ -28,10 +34,10 @@ class DaySelectionForm extends Form {
 		setCommandListener(new CommandListener() {
 			public void commandAction(Command command, Displayable displayable) {
 				if (command == cmBack) {
-					FormManager.getInstance().navigateToRoutineSelection();
+					getFormManager().navigateToRoutineSelection();
 				} else if (command == cmSelect) {
-					FormManager.getInstance().navigateToNavigation(
-							routine.getDays()[dayCg.getSelectedIndex()]);
+					getRoutineManager().setCurrentDay(dayCg.getSelectedIndex());
+					getFormManager().navigateToNavigation();
 				}
 			}
 		});

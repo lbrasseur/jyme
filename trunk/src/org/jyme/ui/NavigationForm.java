@@ -3,28 +3,23 @@ package org.jyme.ui;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.StringItem;
 
-import org.jyme.domain.Day;
-import org.jyme.domain.Excercise;
+import org.jyme.domain.Exercise;
 import org.jyme.domain.Series;
 
-class NavigationForm extends Form {
-	private int currentExcercise = 0;
-	private int currentSeries = 0;
+class NavigationForm extends BaseForm {
 	private StringItem excersise;
 	private StringItem quantity;
 	private StringItem repetitions;
 	private StringItem weigth;
-	private Day day;
 
-	public NavigationForm(final Day day) {
+	public NavigationForm() {
 		super("Ejercicio");
-		this.day = day;
 
-		final Command cmNext = new Command("Siguiente", Command.SCREEN, 1);
-		final Command cmPrevious = new Command("Anterior", Command.BACK, 2);
+		final Command cmNext = new Command("Siguiente", Command.ITEM, 1);
+		final Command cmPrevious = new Command("Anterior", Command.BACK, 1);
+		final Command cmBack = new Command("Volver", Command.ITEM, 2);
 
 		excersise = new StringItem("Ejercicio: ", "");
 		quantity = new StringItem("Cantidad: ", "");
@@ -41,31 +36,20 @@ class NavigationForm extends Form {
 
 		addCommand(cmNext);
 		addCommand(cmPrevious);
+		addCommand(cmBack);
 
 		setCommandListener(new CommandListener() {
 
 			public void commandAction(Command command, Displayable displayable) {
 				if (command == cmPrevious) {
-					if (currentSeries > 0) {
-						currentSeries--;
-					} else if (currentExcercise > 0) {
-						currentExcercise--;
-						currentSeries = day.getExcercises()[currentExcercise]
-								.getSeries().length - 1;
-					} else {
-						FormManager.getInstance().navigateToDaySelection(
-								day.getRoutine());
-					}
+					getRoutineManager().navigateBack();
+					updateDisplay();
 				} else if (command == cmNext) {
-					if (currentSeries < day.getExcercises()[currentExcercise]
-							.getSeries().length - 1) {
-						currentSeries++;
-					} else if (currentExcercise < day.getExcercises().length - 1) {
-						currentExcercise++;
-						currentSeries = 0;
-					}
+					getRoutineManager().navigateForward();
+					updateDisplay();
+				}else if (command == cmBack) {
+					getFormManager().navigateToDaySelection();
 				}
-				updateDisplay();
 			}
 		});
 
@@ -73,8 +57,8 @@ class NavigationForm extends Form {
 	}
 
 	private void updateDisplay() {
-		Excercise excer = day.getExcercises()[currentExcercise];
-		Series series = excer.getSeries()[currentSeries];
+		Exercise excer = getRoutineManager().getCurrentExercise();
+		Series series = getRoutineManager().getCurrentSeries();
 		excersise.setText(excer.getName());
 		quantity.setText(String.valueOf(series.getQuantity()));
 		repetitions.setText(String.valueOf(series.getRepetitions()));
