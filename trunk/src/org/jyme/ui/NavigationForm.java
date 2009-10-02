@@ -19,13 +19,13 @@ class NavigationForm extends BaseForm {
 
 		final Command cmNext = new Command("Siguiente", Command.ITEM, 1);
 		final Command cmPrevious = new Command("Anterior", Command.BACK, 1);
+		final Command cmBack = new Command("Volver", Command.ITEM, 2);
 		final Command cmChangeQuantity = new Command("Cambiar cantidad",
-				Command.ITEM, 2);
-		final Command cmChangeRepetitions = new Command("Cambiar repeticiones",
 				Command.ITEM, 3);
-		final Command cmChangeWeigth = new Command("Cambiar peso",
+		final Command cmChangeRepetitions = new Command("Cambiar repeticiones",
 				Command.ITEM, 4);
-		final Command cmBack = new Command("Volver", Command.ITEM, 5);
+		final Command cmChangeWeigth = new Command("Cambiar peso",
+				Command.ITEM, 5);
 
 		excersise = new StringItem("Ejercicio: ", "");
 		quantity = new StringItem("Cantidad: ", "");
