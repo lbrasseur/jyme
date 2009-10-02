@@ -10,7 +10,6 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDlet;
 
-import org.jyme.bus.RoutineManager;
 import org.jyme.data.DataManager;
 
 public class FormManager {
@@ -20,7 +19,6 @@ public class FormManager {
 	private final static String CHIVO_KEY = "chivo";
 	private MIDlet midlet;
 	private Display display;
-	private RoutineManager routineManager = RoutineManager.getInstance();
 	private final int FORM_ROUTINE_SELECTION = 0;
 	private final int FORM_DAY_SELECTION = 1;
 	private final int FORM_NAVIGATION = 2;
@@ -39,12 +37,8 @@ public class FormManager {
 	}
 
 	public void navigateToDaySelection() {
-		if (routineManager.getCurrentRoutine().getDays().length == 1) {
-			navigateToNavigation();
-		} else {
-			currentForm = FORM_DAY_SELECTION;
-			navigateToCurrentForm();
-		}
+		currentForm = FORM_DAY_SELECTION;
+		navigateToCurrentForm();
 	}
 
 	public void navigateToNavigation() {
@@ -61,6 +55,7 @@ public class FormManager {
 			public void onOk() {
 				midlet.notifyDestroyed();
 			}
+
 			public void onCancel() {
 				navigateToRoutineSelection();
 			}
@@ -98,7 +93,7 @@ public class FormManager {
 		Form prompt = new Form(message);
 		prompt.addCommand(cmdOK);
 		prompt.addCommand(cmdCancel);
-		final TextField field = new TextField(label+": ", value, 50, 0);
+		final TextField field = new TextField(label + ": ", value, 50, 0);
 		prompt.append(field);
 		display.setCurrent(prompt);
 
