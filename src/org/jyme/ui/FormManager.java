@@ -16,6 +16,7 @@ public class FormManager {
 	private static FormManager instance = new FormManager();
 	private DataManager dataManager = DataManager.getInstance();
 	private final static String RS_STATE_NAME = "formState";
+	private final static String CHIVO_KEY = "chivo";
 	private MIDlet midlet;
 	private Display display;
 	private RoutineManager routineManager = RoutineManager.getInstance();
@@ -109,9 +110,11 @@ public class FormManager {
 		switch (currentForm) {
 		case FORM_ROUTINE_SELECTION:
 			form = new RoutineSelectionForm();
+			form.append(getChivo());
 			break;
 		case FORM_DAY_SELECTION:
 			form = new DaySelectionForm();
+			form.append(getChivo());
 			break;
 
 		case FORM_NAVIGATION:
@@ -119,5 +122,9 @@ public class FormManager {
 			break;
 		}
 		display.setCurrent(form);
+	}
+
+	private String getChivo() {
+		return "\n"+midlet.getAppProperty(CHIVO_KEY);
 	}
 }
