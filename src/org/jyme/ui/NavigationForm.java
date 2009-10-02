@@ -19,7 +19,13 @@ class NavigationForm extends BaseForm {
 
 		final Command cmNext = new Command("Siguiente", Command.ITEM, 1);
 		final Command cmPrevious = new Command("Anterior", Command.BACK, 1);
-		final Command cmBack = new Command("Volver", Command.ITEM, 2);
+		final Command cmChangeQuantity = new Command("Cambiar cantidad",
+				Command.ITEM, 2);
+		final Command cmChangeRepetitions = new Command("Cambiar repeticiones",
+				Command.ITEM, 3);
+		final Command cmChangeWeigth = new Command("Cambiar peso",
+				Command.ITEM, 4);
+		final Command cmBack = new Command("Volver", Command.ITEM, 5);
 
 		excersise = new StringItem("Ejercicio: ", "");
 		quantity = new StringItem("Cantidad: ", "");
@@ -37,18 +43,80 @@ class NavigationForm extends BaseForm {
 		addCommand(cmNext);
 		addCommand(cmPrevious);
 		addCommand(cmBack);
+		addCommand(cmChangeQuantity);
+		addCommand(cmChangeRepetitions);
+		addCommand(cmChangeWeigth);
 
 		setCommandListener(new CommandListener() {
-
 			public void commandAction(Command command, Displayable displayable) {
+				final Series series = getRoutineManager().getCurrentSeries();
 				if (command == cmPrevious) {
 					getRoutineManager().navigateBack();
 					updateDisplay();
 				} else if (command == cmNext) {
 					getRoutineManager().navigateForward();
 					updateDisplay();
-				}else if (command == cmBack) {
+				} else if (command == cmBack) {
 					getFormManager().navigateToDaySelection();
+				} else if (command == cmChangeQuantity) {
+					getFormManager().prompt("Cambiar la cantidad de series",
+							"Cantidad de series",
+							String.valueOf(series.getQuantity()),
+							new DialogCallbackAdapter() {
+								public void onOk(String value) {
+									try {
+										series.setQuantity(Integer
+												.parseInt(value));
+										getRoutineManager().saveRoutine(
+												getRoutineManager()
+														.getCurrentRoutine());
+									} catch (NumberFormatException e) {
+									}
+								}
+
+								public void afterBoth() {
+									getFormManager().navigateToNavigation();
+								}
+							});
+				} else if (command == cmChangeRepetitions) {
+					getFormManager().prompt("Cambiar las repeticiones",
+							"Repeticiones",
+							String.valueOf(series.getRepetitions()),
+							new DialogCallbackAdapter() {
+								public void onOk(String value) {
+									try {
+										series.setRepetitions(Integer
+												.parseInt(value));
+										getRoutineManager().saveRoutine(
+												getRoutineManager()
+														.getCurrentRoutine());
+									} catch (NumberFormatException e) {
+									}
+								}
+
+								public void afterBoth() {
+									getFormManager().navigateToNavigation();
+								}
+							});
+				} else if (command == cmChangeWeigth) {
+					getFormManager().prompt("Cambiar el peso", "Peso",
+							String.valueOf(series.getWeight()),
+							new DialogCallbackAdapter() {
+								public void onOk(String value) {
+									try {
+										series.setWeight(Integer
+												.parseInt(value));
+										getRoutineManager().saveRoutine(
+												getRoutineManager()
+														.getCurrentRoutine());
+									} catch (NumberFormatException e) {
+									}
+								}
+
+								public void afterBoth() {
+									getFormManager().navigateToNavigation();
+								}
+							});
 				}
 			}
 		});

@@ -49,10 +49,10 @@ public class RoutineManager {
 		boolean found = dataManager.execute(RS_NAME, new RecordCallback() {
 			public boolean doInRecord(int recordId, RecordStore recordStore,
 					int iteration) throws RecordStoreException {
-				Routine currentRoutine = Routine.fromString(new String(
+				Routine recordRoutine = Routine.fromString(new String(
 						recordStore.getRecord(recordId)));
 
-				if (currentRoutine.getName().equals(routine.getName())) {
+				if (recordRoutine.getName().equals(routine.getName())) {
 					recordStore.setRecord(recordId, routineString.getBytes(),
 							0, routineString.length());
 					return false;
@@ -72,9 +72,8 @@ public class RoutineManager {
 					return null;
 				}
 			});
-
-			loadRoutines();
 		}
+		loadRoutines();
 	}
 
 	public void deleteRoutine(final Routine routine) {
