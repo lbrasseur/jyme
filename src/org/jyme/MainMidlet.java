@@ -13,8 +13,14 @@ public class MainMidlet extends MIDlet {
 	protected void startApp() throws MIDletStateChangeException {
 		routineManager.setMidlet(this);
 		formManager.setMidlet(this);
-		routineManager.loadState();
-		formManager.loadState();
+
+		try {
+			routineManager.loadState();
+			formManager.loadState();
+		} catch (Exception e) {
+			routineManager.resetState();
+			formManager.resetState();
+		}
 	}
 
 	protected void pauseApp() {

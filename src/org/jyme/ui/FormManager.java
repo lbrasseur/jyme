@@ -98,6 +98,12 @@ public class FormManager {
 		navigateToCurrentForm();
 	}
 
+	public void resetState() {
+		currentForm = 0;
+		saveState();
+		loadState();
+	}
+
 	private void navigateToCurrentForm() {
 		Form form = null;
 		switch (currentForm) {

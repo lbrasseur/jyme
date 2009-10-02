@@ -127,6 +127,15 @@ public class RoutineManager {
 		}
 	}
 
+	public void resetState() {
+		currentRoutine = 0;
+		currentDay = 0;
+		currentExercise = 0;
+		currentSeries = 0;
+		saveState();
+		loadState();
+	}
+
 	public Routine[] getRoutines() {
 		if (routines == null) {
 			loadRoutines();
@@ -143,7 +152,6 @@ public class RoutineManager {
 	}
 
 	public Exercise getCurrentExercise() {
-		System.out.println("currentExercise" +currentExercise);
 		return getCurrentDay().getExcercises()[currentExercise];
 	}
 
@@ -152,22 +160,24 @@ public class RoutineManager {
 	}
 
 	public void setCurrentRoutine(int currentRoutine) {
-		this.currentRoutine = currentRoutine;
+		this.currentRoutine = limit(currentRoutine, getRoutines());
 		setCurrentDay(0);
 	}
 
 	public void setCurrentDay(int currentDay) {
-		this.currentDay = currentDay;
+		this.currentDay = limit(currentDay, getCurrentRoutine().getDays());
 		setCurrentExercise(0);
 	}
 
 	public void setCurrentExercise(int currentExercise) {
-		this.currentExercise = currentExercise;
+		this.currentExercise = limit(currentExercise, getCurrentDay()
+				.getExcercises());
 		setCurrentSeries(0);
 	}
 
 	public void setCurrentSeries(int currentSeries) {
-		this.currentSeries = currentSeries;
+		this.currentSeries = limit(currentSeries, getCurrentExercise()
+				.getSeries());
 	}
 
 	private void loadRoutines() {
@@ -252,6 +262,10 @@ public class RoutineManager {
 			}
 		}
 
+	}
+
+	private int limit(int value, Object[] array) {
+		return value < array.length ? value : array.length - 1;
 	}
 
 	public void setMidlet(MIDlet midlet) {
