@@ -6,7 +6,6 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 
-import org.jyme.bus.RoutineManager;
 import org.jyme.domain.Routine;
 
 class RoutineSelectionForm extends BaseForm {
@@ -44,21 +43,18 @@ class RoutineSelectionForm extends BaseForm {
 					getFormManager().navigateToRoutineLoad();
 				} else if (command == cmDelete) {
 					getFormManager().confirmate("Desea borrar la rutina?",
-							new CommandListener() {
-								public void commandAction(Command command,
-										Displayable displayable) {
-									if (command.getCommandType() == Command.OK) {
-										RoutineManager
-												.getInstance()
-												.deleteRoutine(
-														routines[routineCg
-																.getSelectedIndex()]);
-									}
+							new DialogCallbackAdapter() {
+								public void onOk() {
+									getRoutineManager().deleteRoutine(
+											routines[routineCg
+													.getSelectedIndex()]);
+								}
+
+								public void afterBoth() {
 									getFormManager()
 											.navigateToRoutineSelection();
 								}
 							});
-
 				} else if (command == cmSelect) {
 					if (routineCg.getSelectedIndex() >= 0) {
 						getRoutineManager().setCurrentRoutine(

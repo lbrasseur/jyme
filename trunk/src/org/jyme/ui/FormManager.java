@@ -7,6 +7,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDlet;
 
 import org.jyme.bus.RoutineManager;
@@ -56,18 +57,17 @@ public class FormManager {
 	}
 
 	public void navigateToExit() {
-		confirmate("Desea salir?", new CommandListener() {
-			public void commandAction(Command command, Displayable displayable) {
-				if (command.getCommandType() == Command.OK) {
-					midlet.notifyDestroyed();
-				} else {
-					navigateToRoutineSelection();
-				}
+		confirmate("Desea salir?", new DialogCallbackAdapter() {
+			public void onOk() {
+				midlet.notifyDestroyed();
+			}
+			public void onCancel() {
+				navigateToRoutineSelection();
 			}
 		});
 	}
 
-	public void confirmate(String message, CommandListener commandListener) {
+	public void confirmate(String message, final DialogCallback dialogCallback) {
 		final Command cmdOK = new Command("OK", Command.OK, 0);
 		Command cmdCancel = new Command("Cancel", Command.CANCEL, 0);
 
@@ -78,7 +78,40 @@ public class FormManager {
 		confirm.setTimeout(Alert.FOREVER);
 		display.setCurrent(confirm);
 
-		confirm.setCommandListener(commandListener);
+		confirm.setCommandListener(new CommandListener() {
+			public void commandAction(Command command, Displayable displayable) {
+				if (command.getCommandType() == Command.OK) {
+					dialogCallback.onOk();
+				} else {
+					dialogCallback.onCancel();
+				}
+				dialogCallback.afterBoth();
+			}
+		});
+	}
+
+	public void prompt(String message, String label, String value,
+			final DialogCallback dialogCallback) {
+		final Command cmdOK = new Command("OK", Command.OK, 0);
+		Command cmdCancel = new Command("Cancel", Command.CANCEL, 0);
+
+		Form prompt = new Form(message);
+		prompt.addCommand(cmdOK);
+		prompt.addCommand(cmdCancel);
+		final TextField field = new TextField(label+": ", value, 50, 0);
+		prompt.append(field);
+		display.setCurrent(prompt);
+
+		prompt.setCommandListener(new CommandListener() {
+			public void commandAction(Command command, Displayable displayable) {
+				if (command.getCommandType() == Command.OK) {
+					dialogCallback.onOk(field.getString());
+				} else {
+					dialogCallback.onCancel();
+				}
+				dialogCallback.afterBoth();
+			}
+		});
 	}
 
 	public void setMidlet(MIDlet midlet) {
@@ -125,6 +158,6 @@ public class FormManager {
 	}
 
 	private String getChivo() {
-		return "\n"+midlet.getAppProperty(CHIVO_KEY);
+		return "\n" + midlet.getAppProperty(CHIVO_KEY);
 	}
 }
