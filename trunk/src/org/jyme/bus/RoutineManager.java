@@ -39,9 +39,12 @@ public class RoutineManager {
 	}
 
 	public void loadRoutineFromUrl(final String urlName) {
-		final String routineString = StringUtils
-				.convertToUnix(getRoutineFromUrl(urlName));
-		final Routine newRoutine = Routine.fromString(routineString);
+		saveRoutine(Routine.fromString(StringUtils
+				.convertToUnix(getRoutineFromUrl(urlName))));
+	}
+
+	public void saveRoutine(final Routine routine) {
+		final String routineString = routine.toString();
 
 		boolean found = dataManager.execute(RS_NAME, new RecordCallback() {
 			public boolean doInRecord(int recordId, RecordStore recordStore,
@@ -49,7 +52,7 @@ public class RoutineManager {
 				Routine currentRoutine = Routine.fromString(new String(
 						recordStore.getRecord(recordId)));
 
-				if (currentRoutine.getName().equals(newRoutine.getName())) {
+				if (currentRoutine.getName().equals(routine.getName())) {
 					recordStore.setRecord(recordId, routineString.getBytes(),
 							0, routineString.length());
 					return false;
@@ -69,8 +72,9 @@ public class RoutineManager {
 					return null;
 				}
 			});
+
+			loadRoutines();
 		}
-		loadRoutines();
 	}
 
 	public void deleteRoutine(final Routine routine) {

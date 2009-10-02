@@ -39,4 +39,17 @@ public class Day {
 	public void setExcercises(Exercise[] excercises) {
 		this.excercises = excercises;
 	}
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(name);
+
+		for (int n = 0; n < excercises.length; n++) {
+			sb.append(SEPARATOR);
+			sb.append(excercises[n]);
+		}
+
+		return sb.toString();
+	}
 }
