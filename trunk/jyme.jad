@@ -1,8 +1,9 @@
-MIDlet-Version: 1.0.0
-MIDlet-Vendor: Midlet Suite Vendor
-MIDlet-Jar-URL: jyme.jar
-MicroEdition-Configuration: CLDC-1.1
-MicroEdition-Profile: MIDP-2.0
+chivo: Gimnacio AMICI - Balcarce 550, Rosario - Tel. 4491534
 MIDlet-1: jyme,,org.jyme.MainMidlet
+MIDlet-Jar-URL: jyme.jar
 routineBaseUrl: http://jyme.googlecode.com/files/routine_
+MicroEdition-Configuration: CLDC-1.1
+MIDlet-Version: 1.0.0
 MIDlet-Name: Jyme
+MIDlet-Vendor: Midlet Suite Vendor
+MicroEdition-Profile: MIDP-2.0
