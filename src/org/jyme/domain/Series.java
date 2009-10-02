@@ -48,4 +48,8 @@ public class Series {
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
+
+	public String toString() {
+		return quantity + SEPARATOR + repetitions + SEPARATOR + weight;
+	}
 }

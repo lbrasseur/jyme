@@ -39,4 +39,17 @@ public class Routine {
 	public void setDays(Day[] days) {
 		this.days = days;
 	}
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(name);
+
+		for (int n = 0; n < days.length; n++) {
+			sb.append(SEPARATOR);
+			sb.append(days[n]);
+		}
+
+		return sb.toString();
+	}
 }
