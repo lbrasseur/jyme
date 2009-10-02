@@ -63,7 +63,13 @@ public class RoutineManager {
 
 		});
 
-		if (!found) {
+		if (found) {
+			for (int n = 0; n < routines.length; n++) {
+				if (routines[n].getName().equals(routine.getName())) {
+					routines[n] = routine;
+				}
+			}
+		} else {
 			dataManager.execute(RS_NAME, new RecordStoreCallback() {
 				public Object doInRecordStore(RecordStore recordStore)
 						throws RecordStoreException {
@@ -72,8 +78,8 @@ public class RoutineManager {
 					return null;
 				}
 			});
+			loadRoutines();
 		}
-		loadRoutines();
 	}
 
 	public void deleteRoutine(final Routine routine) {
