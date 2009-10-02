@@ -7,27 +7,21 @@ public class Series {
 	private int repetitions;
 	private int weight;
 	private final static String SEPARATOR = ",";
-	
-	public Series() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public Series(int quantity, int repetitions, int weight) {
-		super();
-		this.quantity = quantity;
-		this.repetitions = repetitions;
-		this.weight = weight;
-	}
 
 	static Series fromString(String data) {
 		Series series = new Series();
-		String[] fields = StringUtils.split(data, SEPARATOR); 
-		
-		series.setQuantity(Integer.parseInt(fields[0]));
-		series.setRepetitions(Integer.parseInt(fields[1]));
-		series.setWeight(Integer.parseInt(fields[2]));
-		
+		String[] fields = StringUtils.split(data, SEPARATOR);
+
+		if (fields.length > 0) {
+			series.setQuantity(Integer.parseInt(fields[0]));
+		}
+		if (fields.length > 1) {
+			series.setRepetitions(Integer.parseInt(fields[1]));
+		}
+		if (fields.length > 2) {
+			series.setWeight(Integer.parseInt(fields[2]));
+		}
+
 		return series;
 	}
 

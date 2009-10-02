@@ -7,26 +7,20 @@ public class Routine {
 	private Day[] days;
 	private final static String SEPARATOR = "\n-\n";
 
-	public Routine() {
-	}
-
-	public Routine(String name, Day[] days) {
-		setName(name);
-		setDays(days);
-	}
-	
 	public static Routine fromString(String data) {
 		Routine routine = new Routine();
-		String[] fields = StringUtils.split(data, SEPARATOR); 
-		
-		routine.setName(fields[0]);
-		
-		Day[] days =  new Day[fields.length -1];
-		for (int n = 1; n<fields.length;n++) {
-			days[n - 1]= Day.fromString(fields[n]);
+		String[] fields = StringUtils.split(data, SEPARATOR);
+
+		if (fields.length > 0) {
+			routine.setName(fields[0]);
+		}
+
+		Day[] days = new Day[fields.length - 1];
+		for (int n = 1; n < fields.length; n++) {
+			days[n - 1] = Day.fromString(fields[n]);
 		}
 		routine.setDays(days);
-		
+
 		return routine;
 	}
 

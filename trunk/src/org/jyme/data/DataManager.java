@@ -82,4 +82,12 @@ public class DataManager {
 			}
 		});
 	}
+	
+	public void deleteRecordStore(String rsName) {
+		try {
+			RecordStore.deleteRecordStore(rsName);
+		} catch (RecordStoreException e) {
+			throw new RuntimeException(e.toString());
+		}
+	}
 }
